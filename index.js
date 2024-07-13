@@ -1,8 +1,9 @@
 const axios = require("axios");
 const tough = require("tough-cookie");
-const { wrapper } = require("axios-cookiejar-support");
+const {wrapper} = require("axios-cookiejar-support");
 const fs = require("fs");
 const keep_alive = require("./keep_alive.js");
+
 async function delay(minSeconds, maxSeconds) {
     const randomDelay =
         Math.floor(Math.random() * (maxSeconds - minSeconds + 1) * 1000) +
@@ -20,7 +21,7 @@ async function authLogin(token, retries = 3) {
     }
     try {
         const jar = new tough.CookieJar();
-        const client = wrapper(axios.create({ jar }));
+        const client = wrapper(axios.create({jar}));
         const urlLogin = `https://var.fconline.garena.vn/auth/login/callback?access_token=${token}`;
         await client.get(urlLogin, {
             headers: {
@@ -69,7 +70,7 @@ async function getInfo(cookie, retries = 3) {
     }
     try {
         const jar = new tough.CookieJar();
-        const client = wrapper(axios.create({ jar }));
+        const client = wrapper(axios.create({jar}));
         const urlGetPlayer = "https://var.fconline.garena.vn/api/player/get";
         const response = await client.get(urlGetPlayer, {
             headers: {
@@ -102,10 +103,10 @@ async function exchangeVoucher(cookie, id, retries = 10) {
     }
     try {
         const jar = new tough.CookieJar();
-        const client = wrapper(axios.create({ jar }));
+        const client = wrapper(axios.create({jar}));
         const urlExchange =
             "https://var.fconline.garena.vn/api/shop-rewards/exchange";
-        const data = { id: id };
+        const data = {id: id};
         const response = await client.post(urlExchange, data, {
             headers: {
                 Host: "var.fconline.garena.vn",
@@ -158,11 +159,11 @@ async function prepareData() {
     const id100 = 12;
     const id50 = 13;
     const tokenSegments = [
-        { count: 50, id: id500 },
-        { count: 20, id: idHunter },
-        { count: 100, id: id200 },
-        { count: 100, id: id100 },
-        { count: listTokensNew.length - 270, id: id50 },
+        {count: 50, id: id500},
+        {count: 20, id: idHunter},
+        {count: 100, id: id200},
+        {count: 100, id: id100},
+        {count: listTokensNew.length - 270, id: id50},
     ];
     const dataList = [];
     for (const segment of tokenSegments) {
@@ -173,7 +174,7 @@ async function prepareData() {
                 if (cookie) {
                     const dataUser = await getInfo(cookie);
                     const point = dataUser.player.point;
-                    return { token, cookie, id: segment.id, point };
+                    return {token, cookie, id: segment.id, point};
                 }
                 return null;
             }),
@@ -234,7 +235,13 @@ async function checkAllGift() {
             allUserExchanger10 !== item10.allUserExchanged ||
             allUserExchanger11 !== item11.allUserExchanged ||
             allUserExchanger12 !== item12.allUserExchanged ||
-            allUserExchanger13 !== item13.allUserExchanged
+            allUserExchanger13 !== item13.allUserExchanged ||
+            item8.allUserExchangedPerWeek !== item8.shopReward.limitForAllUserPerWeek ||
+            item9.allUserExchangedPerWeek !== item9.shopReward.limitForAllUserPerWeek ||
+            item10.allUserExchangedPerWeek !== item10.shopReward.limitForAllUserPerWeek ||
+            item11.allUserExchangedPerWeek !== item11.shopReward.limitForAllUserPerWeek ||
+            item12.allUserExchangedPerWeek !== item12.shopReward.limitForAllUserPerWeek ||
+            item13.allUserExchangedPerWeek !== item13.shopReward.limitForAllUserPerWeek
         ) {
             console.log("Bắt đầu trao đổi voucher...");
             return true;
@@ -248,7 +255,6 @@ async function checkAllGift() {
         return await checkAllGift();
     }
 }
-
 async function processGifts() {
     const validDataList = await prepareData();
     if (validDataList) {
