@@ -152,7 +152,7 @@ async function readTokensFromFile(filename) {
 async function prepareData() {
     console.time("prepareData");
     const listTokens = await readTokensFromFile("data.txt");
-    const listTokensNew = Array(6).fill(listTokens).flat();
+    const listTokensNew = Array(5).fill(listTokens).flat();
     const idHunter = 8;
     const id500 = 10;
     const id200 = 11;
